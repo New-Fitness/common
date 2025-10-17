@@ -25,5 +25,13 @@ jobs:
           curl -L https://raw.githubusercontent.com/New-Fitness/common/main/checkstyle/google_checks.xml \
             -o config/checkstyle/google_checks.xml
 
-      - name: Run Checkstyle
-        run: ./gradlew checkstyleMain checkstyleTest
+      - name: Run Checkstyle (no DB)
+        run: |
+          # Checkstyle работает с исходниками, не нужна компиляция
+          ./gradlew checkstyleMain checkstyleTest \
+            -x compileJava \
+            -x compileTestJava \
+            -x processResources \
+            -x classes \
+            --continue \
+            --no-daemon || exit 1
