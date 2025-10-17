@@ -8,23 +8,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Download shared Checkstyle config
+        run: |
+          mkdir -p config/checkstyle
+          curl -L https://raw.githubusercontent.com/New-Fitness/.github/main/checkstyle/google_checks.xml \
+            -o config/checkstyle/google_checks.xml
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
-          cache: gradle
 
-      - name: Ensure Gradle wrapper is executable
-        run: chmod +x gradlew
-
-      - name: Download Google Checkstyle config
-        run: |
-          mkdir -p config/checkstyle
-          curl -sSL https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml -o config/checkstyle/google_checks.xml
-
-      - name: Run Checkstyle (Google Java Style)
-        run: ./gradlew checkstyleMain checkstyleTest -PcheckstyleConfig=config/checkstyle/google_checks.xml
+      - name: Run Checkstyle
+        run: ./gradlew checkstyleMain checkstyleTest
