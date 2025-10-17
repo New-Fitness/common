@@ -1,25 +1,23 @@
-name: Java Style Check
-
-on:
-  workflow_call:
-
 jobs:
   checkstyle:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Grant execute permissions for gradlew
+        run: chmod +x gradlew
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
 
       - name: Download shared Checkstyle config
         run: |
           mkdir -p config/checkstyle
-          curl -L https://raw.githubusercontent.com/New-Fitness/.github/main/checkstyle/google_checks.xml \
+          curl -L https://raw.githubusercontent.com/<org-name>/.github/main/checkstyle/google_checks.xml \
             -o config/checkstyle/google_checks.xml
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
 
       - name: Run Checkstyle
         run: ./gradlew checkstyleMain checkstyleTest
