@@ -1,8 +1,7 @@
-# java-style-check.yml (в репозитории common)
 name: Java Style Check
 
 on:
-  workflow_call:   # ← обязательно workflow_call для reusable workflow
+  workflow_call:
 
 jobs:
   checkstyle:
@@ -10,28 +9,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Grant execute permissions for gradlew
-        run: chmod +x gradlew
-
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
+      - name: Download Checkstyle JAR
+        run: |
+          mkdir -p .checkstyle
+          curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.20.0/checkstyle-10.20.0-all.jar \
+            -o .checkstyle/checkstyle.jar
+
       - name: Download shared Checkstyle config
         run: |
-          mkdir -p config/checkstyle
           curl -L https://raw.githubusercontent.com/New-Fitness/common/main/checkstyle/google_checks.xml \
-            -o config/checkstyle/google_checks.xml
+            -o .checkstyle/google_checks.xml
 
-      - name: Run Checkstyle (no DB)
+      - name: Run Checkstyle
         run: |
-          # Checkstyle работает с исходниками, не нужна компиляция
-          ./gradlew checkstyleMain checkstyleTest \
-            -x compileJava \
-            -x compileTestJava \
-            -x processResources \
-            -x classes \
-            --continue \
-            --no-daemon || exit 1
+          java -jar .checkstyle/checkstyle.jar \
+            -c .checkstyle/google_checks.xml \
+            src/main/java src/test/java \
+            || exit 1
