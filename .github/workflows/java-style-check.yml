@@ -1,3 +1,9 @@
+# java-style-check.yml (в репозитории common)
+name: Java Style Check
+
+on:
+  workflow_call:   # ← обязательно workflow_call для reusable workflow
+
 jobs:
   checkstyle:
     runs-on: ubuntu-latest
@@ -16,7 +22,7 @@ jobs:
       - name: Download shared Checkstyle config
         run: |
           mkdir -p config/checkstyle
-          curl -L https://raw.githubusercontent.com/<org-name>/.github/main/checkstyle/google_checks.xml \
+          curl -L https://raw.githubusercontent.com/New-Fitness/common/main/checkstyle/google_checks.xml \
             -o config/checkstyle/google_checks.xml
 
       - name: Run Checkstyle
