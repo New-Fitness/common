@@ -20,15 +20,38 @@ jobs:
           mkdir -p .checkstyle
           curl -L https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.20.0/checkstyle-10.20.0-all.jar \
             -o .checkstyle/checkstyle.jar
+          echo "✅ Checkstyle JAR downloaded"
 
       - name: Download shared Checkstyle config
         run: |
           curl -L https://raw.githubusercontent.com/New-Fitness/common/main/checkstyle/google_checks.xml \
             -o .checkstyle/google_checks.xml
+          echo "✅ Checkstyle config downloaded"
+
+      - name: Find Java files
+        run: |
+          echo "📁 Searching for Java files..."
+          find src -name "*.java" -type f | head -20
+          JAVA_COUNT=$(find src -name "*.java" -type f | wc -l)
+          echo "📊 Found $JAVA_COUNT Java files to check"
 
       - name: Run Checkstyle
         run: |
+          echo "🔍 Running Checkstyle..."
           java -jar .checkstyle/checkstyle.jar \
             -c .checkstyle/google_checks.xml \
+            -f plain \
             src/main/java src/test/java \
-            || exit 1
+            2>&1 | tee checkstyle-output.txt
+          
+          EXIT_CODE=${PIPESTATUS[0]}
+          
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✅ Checkstyle passed! No violations found."
+          else
+            echo "❌ Checkstyle found violations!"
+            echo "📋 Summary:"
+            grep -E "\[WARN\]|\[ERROR\]" checkstyle-output.txt | wc -l || echo "0"
+          fi
+          
+          exit $EXIT_CODE
