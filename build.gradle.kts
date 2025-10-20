@@ -20,6 +20,7 @@ publishing {
     }
 
     repositories {
+        mavenCentral()
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/New-Fitness/common")
