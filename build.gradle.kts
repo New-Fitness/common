@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.mlgym"
-version = "1.0.0" // при изменении DTO повышай версию
+version = "1.0.1" // при изменении DTO повышай версию
 
 java {
     withSourcesJar()
