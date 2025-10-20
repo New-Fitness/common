@@ -23,7 +23,12 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      # ✅ Передаём переменные окружения Gradle'у
       - name: Publish to GitHub Packages
         env:
-          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN}}
-        run: ./gradlew publish
+          GITHUB_ACTOR: ${{ secrets.PACKAGE_ACTOR }}
+          GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+        run: |
+          ./gradlew publish \
+            -Pgpr.user=${{ github.actor }} \
+            -Pgpr.key=${{ secrets.GITHUB_TOKEN }}
