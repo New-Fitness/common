@@ -1,5 +1,4 @@
 plugins {
-    id("java")
     `java-library`
     `maven-publish`
 }
@@ -9,7 +8,15 @@ version = "1.0.0" // при изменении DTO повышай версию
 
 java {
     withSourcesJar()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
+
+repositories {
+    mavenCentral()
+}
+
 
 publishing {
     publications {
@@ -20,7 +27,6 @@ publishing {
     }
 
     repositories {
-        mavenCentral()
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/New-Fitness/common")
@@ -33,8 +39,7 @@ publishing {
 }
 
 dependencies {
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-
+    compileOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
